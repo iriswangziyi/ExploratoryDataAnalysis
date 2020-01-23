@@ -1,0 +1,156 @@
+---
+title: "hw2"
+author: "Weixiu Jenny Dong"
+date: "1/20/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Dataset Description
+```{r}
+data <- read.csv('AB_NYC_2019.csv')
+```
+
+This dataset describes the Airbnb listing activity and metrics in NYC, NY for 2019.
+There are 48896 observations.
+ 
+There are 16 variables, with the following column names in the dataset and
+explanations:
+Id (listing ID), name (name of the listing), host_id (host ID), host_name (name of the host) neighbourhood_group (location), neighbourhood (area), latitude (latitude coordinates), longitude (longitude coordinates), room_type (listing space type), price (price in dollars), minimum_nights
+(amount of nights minimum), number_of_reviews (number of reviews), last_review (latest review), reviews_per_month (number of reviews per month), calculated_host_listings_count (amount of listing per host), availability_365 (number of days when listing is available for booking)
+
+## Research Question
+How does room types affect the traffic (number of listings) among different areas?
+
+## Table one
+There are 3 different categories for room type: **Private room**, **Entire home/apt** and  **Shared room**.    
+```{r}
+summary(as.factor(data$room_type))
+```
+
+Let's first sepearate the categorical vs. discrete variables. 
+Then, keep only relevant columns in our production of table one.
+```{r}
+colnames(data)
+```
+
+```{r}
+# var to display in table
+myVars <- c("neighbourhood_group" , "latitude", "longitude", "price", "minimum_nights", "number_of_reviews", "reviews_per_month", "calculated_host_listings_count","availability_365")
+    
+# categorical
+catVars <- c("neighbourhood_group")# , "neighbourhood")
+
+# continous
+contVars <- c("latitude", "longitude", "price", "minimum_nights", "number_of_reviews", "reviews_per_month", "calculated_host_listings_count","availability_365")
+
+
+```
+
+Now let's make Table 1 for this dataset.
+```{r}
+library(tableone)
+tbl <- CreateTableOne(vars = myVars, strata = "room_type" , data = data)#, factorVars = catVars)
+
+tbl
+```
+
+## Including Plots
+
+### Bar plots for categorical variables
+
+```{r, echo=FALSE}
+library(ggplot2)
+bar_tbl <- with(data, table(room_type, neighbourhood_group ))
+
+ggplot(as.data.frame(bar_tbl), aes(x= factor(room_type), y = Freq , fill =neighbourhood_group)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  scale_fill_brewer(palette = "Set1")
+```
+
+### Plots for continous variable
+
+We first use boxplots to explore **latitude** and **longtitude**
+
+```{r}
+ggplot(data, aes(x=room_type, y= latitude)) + 
+    geom_boxplot()
+```
+
+
+```{r}
+ggplot(data, aes(x=room_type, y= longitude)) + 
+    geom_boxplot()
+```
+
+and also **availability_365**.
+```{r}
+ggplot(data, aes(x=room_type, y= availability_365)) + 
+    geom_boxplot()
+```
+
+
+Then, we explore some variables that are highly skewed with both boxplots and histgorams by groups.
+
+Let's first take a look at **price** by groups.
+```{r}
+ggplot(data,aes(x=price))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
+ggplot(data, aes(x=room_type, y=price)) + 
+    geom_boxplot()
+
+```
+
+Then **minimum_nights**. 
+```{r}
+
+ggplot(data,aes(x=minimum_nights))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
+ggplot(data, aes(x=room_type, y= minimum_nights)) + 
+    geom_boxplot()
+
+```
+
+We can also look into **reviews per month**, with na values removed. 
+```{r}
+ggplot(data, aes(x=room_type, y= reviews_per_month,na.rm = TRUE)) + 
+    geom_boxplot(na.rm = TRUE)
+
+
+ggplot(data,aes(x=reviews_per_month,na.rm = TRUE))+
+    geom_histogram(na.rm = TRUE, bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+```
+
+Last but not the least, the **calculated_host_listings_count**.
+
+```{r}
+
+ggplot(data, aes(x=room_type, y= calculated_host_listings_count,na.rm = TRUE)) + 
+    geom_boxplot(na.rm = TRUE)
+
+
+ggplot(data,aes(x=calculated_host_listings_count))+
+    geom_histogram( bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+```
+
+
+We can look into **number_of_review** by just investigating the histogram by groups.
+```{r}
+ggplot(data,aes(x=number_of_reviews))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+```
