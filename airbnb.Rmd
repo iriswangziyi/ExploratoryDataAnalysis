@@ -46,7 +46,7 @@ There are 16 variables (with explanations):<br />
 Based on our research question, we will group my data with room types. <br />
 There are 3 different categories for room type: **Private room**, **Entire home/apt** and  **Shared room**.  
 ```{r}
-#summary(as.factor(df$room_type))
+summary(as.factor(data$room_type))
 ```
 
 Let's keep only relevant columns for our research question.
