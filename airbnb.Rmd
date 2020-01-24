@@ -3,6 +3,7 @@ title: "MATH 189 Homework 3"
 author: "Weixiu Dong, Mengheng Yang, Xuqian Tan, Yushan Liu, Iris Ziyi Wang"
 date: "1/24/2020"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -118,12 +119,15 @@ ggplot(df, aes(x=room_type, y=price)) +
 
 ```
 
-We decide to zoom in on **price** from the range *0-1500*.
+We decide to zoom in on **price** from the range *0-1000*.
 ```{r}
-ggplot(df[df$price < 1500, ],aes(x=price))+
+ggplot(df[df$price < 1000, ],aes(x=price))+
     geom_histogram(bins = 100)+
     facet_grid(~room_type)+
     theme_bw()
+
+ggplot(df[df$price < 1000, ], aes(x=room_type, y=price)) + 
+    geom_boxplot()
 ```
 
 
@@ -146,6 +150,9 @@ ggplot(df[df$minimum_nights < 50, ],aes(x=minimum_nights))+
     geom_histogram(bins = 100)+
     facet_grid(~room_type)+
     theme_bw()
+
+ggplot(df[df$minimum_nights < 50, ], aes(x=room_type, y= minimum_nights)) + 
+    geom_boxplot()
 ```
 We notice that there is a small peak at 30 days, which makes sense for some hosts to start renting their house with a month as the minimum.
 
