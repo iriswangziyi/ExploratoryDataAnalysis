@@ -1,8 +1,9 @@
 ---
-title: "hw2"
-author: "Weixiu Jenny Dong"
+title: "MATH 189 Homework 3"
+author: "Weixiu Dong, Mengheng Yang, Xuqian Tan, Yushan Liu, Iris Ziyi Wang"
 date: "1/20/2020"
-output: pdf_document
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
