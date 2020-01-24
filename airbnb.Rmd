@@ -97,14 +97,14 @@ ggplot(as.data.frame(bar_tbl), aes(x= factor(room_type), y = Freq , fill =neighb
 ### Plots for continous variable
 
 
-and also **availability_365**.
+We first take a look at **availability_365**.
 ```{r}
 ggplot(df, aes(x=room_type, y= availability_365)) + 
     geom_boxplot()
 ```
 
 
-Then, we explore some variables that are highly skewed with both boxplots and histgorams by groups.
+Then, we explore some variables with both boxplots and histgorams by groups. We notice that these data are highly skewed.
 
 Let's first take a look at **price** by groups.
 ```{r}
@@ -118,6 +118,15 @@ ggplot(df, aes(x=room_type, y=price)) +
 
 ```
 
+We decide to zoom in on **price** from the range *0-1500*.
+```{r}
+ggplot(df[df$price < 1500, ],aes(x=price))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+```
+
+
 Then **minimum_nights**. 
 ```{r}
 
@@ -130,7 +139,15 @@ ggplot(df, aes(x=room_type, y= minimum_nights)) +
     geom_boxplot()
 
 ```
+Since the data is highly skewed, we decide to zoom in on **minimum_nights** from the range *0-50*.
 
+```{r}
+ggplot(df[df$minimum_nights < 50, ],aes(x=minimum_nights))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+```
+We notice that there is a small peak at 30 days, which makes sense for some hosts to start renting their house with a month as the minimum.
 
 We can look into **number_of_review** by just investigating the histogram by groups.
 ```{r}
