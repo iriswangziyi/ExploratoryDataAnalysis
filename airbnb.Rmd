@@ -61,14 +61,14 @@ dim(df)
 head(df)
 ```
 
-Cleaning **availability_365**: remove all unreasonable values (all 0 values)
+Check if there's any NA in the dataset.
 ```{r}
-df<-df[!(df$availability_365 ==0),]
+sum(is.na(df))
 ```
 
-Cleaning **minimum_nights**: remove all values above 100
+Cleaning **availability_365**: remove all rows with value of 0.
 ```{r}
-df<-df[!(df$minimum_nights > 100),]
+df<-df[!(df$availability_365 ==0),]
 ```
 
 ## Table 1
