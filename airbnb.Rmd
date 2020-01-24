@@ -2,6 +2,9 @@
 title: "MATH 189 Homework 3"
 author: "Weixiu Dong, Mengheng Yang, Xuqian Tan, Yushan Liu, Iris Ziyi Wang"
 date: "1/24/2020"
+output:
+  html_document:
+    df_print: paged
 ---
 
 ## Dataset Description
@@ -56,6 +59,16 @@ df = data[,names(data) %in% keeps]
 names(df)
 dim(df)
 head(df)
+```
+
+Cleaning **availability_365**: remove all unreasonable values (all 0 values)
+```{r}
+df<-df[!(df$availability_365 ==0),]
+```
+
+Cleaning **minimum_nights**: remove all values above 100
+```{r}
+df<-df[!(df$minimum_nights > 100),]
 ```
 
 ## Table 1
