@@ -3,13 +3,13 @@ title: "MATH 189 Homework 3"
 author: "Weixiu Dong, Mengheng Yang, Xuqian Tan, Yushan Liu, Iris Ziyi Wang"
 date: "1/24/2020"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ## Dataset Description
-```{r}
+```{r, echo = F}
 data <- read.csv('AB_NYC_2019.csv')
 ```
 
@@ -20,7 +20,7 @@ There are 48896 observations.
 An exploratory data analysis on airbnb listings in NYC in 2019
 Raw dataset source: https://www.kaggle.com/dgomonov/new-york-city-airbnb-open-data
 
-```{r}
+```{r,echo = F }
 names(data)
 dim(data)
 head(data)
@@ -49,12 +49,12 @@ There are 16 variables (with explanations):<br />
 ## Data Cleaning
 Based on our research question, we will group my data with room types. <br />
 There are 3 different categories for room type: **Private room**, **Entire home/apt** and  **Shared room**.  
-```{r}
+```{r, echo = F }
 summary(as.factor(data$room_type))
 ```
 
 Let's keep only relevant columns for our research question.
-```{r}
+```{r, echo = F}
 keeps <- c('neighbourhood_group', 'room_type','price','minimum_nights', 'number_of_reviews','availability_365')
 df = data[,names(data) %in% keeps]
 names(df)
@@ -63,17 +63,17 @@ head(df)
 ```
 
 Check if there's any NA in the dataset.
-```{r}
+```{r, echo = F}
 sum(is.na(df))
 ```
 
 Cleaning **availability_365**: remove all rows with value of 0.
-```{r}
+```{r, echo = F}
 df<-df[!(df$availability_365 ==0),]
 ```
 
 ## Table 1
-```{r}
+```{r, echo = F}
 library("table1")
 table1(~ neighbourhood_group +
        price + 
@@ -99,7 +99,7 @@ ggplot(as.data.frame(bar_tbl), aes(x= factor(room_type), y = Freq , fill =neighb
 
 
 We first take a look at **availability_365**.
-```{r}
+```{r, echo = F}
 ggplot(df, aes(x=room_type, y= availability_365)) + 
     geom_boxplot()
 ```
@@ -108,7 +108,8 @@ ggplot(df, aes(x=room_type, y= availability_365)) +
 Then, we explore some variables with both boxplots and histgorams by groups. We notice that these data are highly skewed.
 
 Let's first take a look at **price** by groups.
-```{r}
+
+```{r, echo = F}
 ggplot(df,aes(x=price))+
     geom_histogram(bins = 100)+
     facet_grid(~room_type)+
@@ -120,7 +121,8 @@ ggplot(df, aes(x=room_type, y=price)) +
 ```
 
 We decide to zoom in on **price** from the range *0-1000*.
-```{r}
+
+```{r, echo = F}
 ggplot(df[df$price < 1000, ],aes(x=price))+
     geom_histogram(bins = 100)+
     facet_grid(~room_type)+
@@ -131,8 +133,10 @@ ggplot(df[df$price < 1000, ], aes(x=room_type, y=price)) +
 ```
 
 
-Then **minimum_nights**. 
-```{r}
+
+Then **minimum_nights**.
+
+```{r, echo = F}
 
 ggplot(df,aes(x=minimum_nights))+
     geom_histogram(bins = 100)+
@@ -143,9 +147,11 @@ ggplot(df, aes(x=room_type, y= minimum_nights)) +
     geom_boxplot()
 
 ```
+
 Since the data is highly skewed, we decide to zoom in on **minimum_nights** from the range *0-50*.
 
-```{r}
+
+```{r, echo = F}
 ggplot(df[df$minimum_nights < 50, ],aes(x=minimum_nights))+
     geom_histogram(bins = 100)+
     facet_grid(~room_type)+
@@ -154,12 +160,100 @@ ggplot(df[df$minimum_nights < 50, ],aes(x=minimum_nights))+
 ggplot(df[df$minimum_nights < 50, ], aes(x=room_type, y= minimum_nights)) + 
     geom_boxplot()
 ```
+
 We notice that there is a small peak at 30 days, which makes sense for some hosts to start renting their house with a month as the minimum.
 
+
 We can look into **number_of_review** by just investigating the histogram by groups.
-```{r}
+
+```{r, echo = F}
 ggplot(df,aes(x=number_of_reviews))+
     geom_histogram(bins = 100)+
     facet_grid(~room_type)+
     theme_bw()
+```
+
+
+Attached R code:
+```{r, results = 'hide', fig.show = 'hide'}
+data <- read.csv('AB_NYC_2019.csv')
+
+names(data)
+dim(data)
+head(data)
+
+
+summary(as.factor(data$room_type))
+
+keeps <- c('neighbourhood_group', 'room_type','price','minimum_nights', 'number_of_reviews','availability_365')
+df = data[,names(data) %in% keeps]
+names(df)
+dim(df)
+head(df)
+
+sum(is.na(df))
+
+df<-df[!(df$availability_365 ==0),]
+
+library("table1")
+table1(~ neighbourhood_group +
+       price + 
+       minimum_nights + 
+       number_of_reviews +
+       availability_365 | room_type,
+       data=df)
+
+
+#neighbourhood_group
+library(ggplot2)
+bar_tbl <- with(df, table(room_type, neighbourhood_group ))
+
+ggplot(as.data.frame(bar_tbl), aes(x= factor(room_type), y = Freq , fill =neighbourhood_group)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  scale_fill_brewer(palette = "Set1")
+
+#avalability_365
+ggplot(df, aes(x=room_type, y= availability_365)) + 
+    geom_boxplot()
+
+#price
+ggplot(df,aes(x=price))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
+ggplot(df, aes(x=room_type, y=price)) + 
+    geom_boxplot()
+
+ggplot(df[df$price < 1000, ],aes(x=price))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
+ggplot(df[df$price < 1000, ], aes(x=room_type, y=price)) + 
+    geom_boxplot()
+
+# minimum_nights
+ggplot(df,aes(x=minimum_nights))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
+ggplot(df, aes(x=room_type, y= minimum_nights)) + 
+    geom_boxplot()
+
+ggplot(df[df$minimum_nights < 50, ],aes(x=minimum_nights))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
+ggplot(df[df$minimum_nights < 50, ], aes(x=room_type, y= minimum_nights)) + 
+    geom_boxplot()
+
+# number_of_reviews
+ggplot(df,aes(x=number_of_reviews))+
+    geom_histogram(bins = 100)+
+    facet_grid(~room_type)+
+    theme_bw()
+
 ```
